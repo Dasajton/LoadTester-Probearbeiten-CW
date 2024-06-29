@@ -8,7 +8,7 @@ public class Container
     public int usedHeight;
     public int loadedItems;
     public List<Item> contents;
-
+    
     public Container(int length, int width, int height, int maxHeight)
     {
         this.length = length;
@@ -17,6 +17,7 @@ public class Container
         this.maxHeight = maxHeight;
         this.contents = new List<Item>();
     }
+
     public bool CanLoadItem(Item item)
     {
         return this.usedHeight + item.height <= this.maxHeight;
@@ -71,36 +72,65 @@ public class LoadTester
         Console.WriteLine("Die maximal Stapelbare Höhe beträgt {0}cm.", containerMaxHeight);
         Console.WriteLine("________________________");
 
-        Console.WriteLine("Wie viele Packstücke müssen eingestapelt werden?: ");
-        int amountOfItems = Convert.ToInt32(Console.ReadLine());
-
         Queue<Item> itemsQueue = new Queue<Item>();
 
-        Console.WriteLine("Vielen Dank für die Eingabe! Nun geben Sie bitte die Maße (Länge, Breite, Höhe) für jedes der einzelnen Packstücke an.");
-        for (int i = 0; i < amountOfItems; i++)
+        string answer;
+        do
         {
-            Console.WriteLine("Länge des {0}. Packstücks: ", i + 1);
-            int itemLength = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Breite des {0}. Packstücks: ", i + 1);
-            int itemWidth = Convert.ToInt32(Console.ReadLine());
-            int itemHeight;
-            do
+            Console.WriteLine("Möchten Sie der Ladeliste ein Packstück hinzufügen? Bitte mit 'Ja' oder 'Nein' beantworten: ");
+            answer = Console.ReadLine();
+
+            if (answer == "Ja")
             {
-                Console.WriteLine("Höhe des {0}. Packstücks: ", i + 1);
-                itemHeight = Convert.ToInt32(Console.ReadLine());
-
-                if (itemHeight > containerMaxHeight)
+                int itemLength;
+                do
                 {
-                    Console.WriteLine("Die Höhe des Packstücks kann nicht über der maximal Stapelbaren Höhe des Containers liegen. Bitte geben Sie einen passenden Höhenwert ein: ");
+                    Console.WriteLine("Länge des Packstücks: ");
+                    itemLength = Convert.ToInt32(Console.ReadLine());
+
+                    if (itemLength > containerLength)
+                    {
+                        Console.WriteLine("Die Länge des Packstücks kann nicht über der maximalen Länge des Containers liegen. Bitte geben Sie einen passenden Längenwert ein: ");
+                    }
                 }
+                while (itemLength > containerLength);
+
+                int itemWidth;
+                do
+                {
+                    Console.WriteLine("Breite des Packstücks: ");
+                    itemWidth = Convert.ToInt32(Console.ReadLine());
+
+                    if (itemWidth > containerWidth)
+                    {
+                        Console.WriteLine("Die Breite des Packstücks kann nicht über der maximalen Breite des Containers liegen. Bitte geben Sie einen passenden Breitenwert ein: ");
+                    }
+                }
+                while (itemWidth > containerWidth);
+
+                int itemHeight;
+                do
+                {
+                    Console.WriteLine("Höhe des Packstücks: ");
+                    itemHeight = Convert.ToInt32(Console.ReadLine());
+
+                    if (itemHeight > containerMaxHeight)
+                    {
+                        Console.WriteLine("Die Höhe des Packstücks kann nicht über der maximal Stapelbaren Höhe des Containers liegen. Bitte geben Sie einen passenden Höhenwert ein: ");
+                    }
+                }
+                while (itemHeight > containerMaxHeight);
+
+                Item item = new Item(itemLength, itemWidth, itemHeight);
+                itemsQueue.Enqueue(item);
+                Console.WriteLine("Packstück wurde der Ladeliste erfolgreich hinzugefügt!");
+                Console.WriteLine("________________________");
             }
-            while (itemHeight > containerMaxHeight);
-
-            Item item = new Item(itemLength, itemWidth, itemHeight);
-            itemsQueue.Enqueue(item);
         }
+        while (answer == "Ja");
 
-        Console.WriteLine("Packstücke wurden erfolgreich erstellt:");
+        Console.WriteLine("________________________");
+        Console.WriteLine("{0} Packstücke wurden erfolgreich erstellt: ", itemsQueue.Count);
         foreach (Item item in itemsQueue)
         {
             Console.WriteLine("Packstück: Länge: {0}cm, Breite: {1}cm, Höhe: {2}cm", item.length, item.width, item.height);
@@ -127,7 +157,7 @@ public class LoadTester
         for (int i = 0; i < containers.Count; i++)
         {
             Console.WriteLine("Container {0} enthält {1} Packstücke:", i + 1, containers[i].loadedItems);
-            foreach (var item in containers[i].contents)
+            foreach (Item item in containers[i].contents)
             {
                 Console.WriteLine("Packstück: Länge: {0}cm, Breite: {1}cm, Höhe: {2}cm", item.length, item.width, item.height);
             }
